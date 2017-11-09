@@ -24,6 +24,16 @@ app.get('/', (req, res) => {
     })
 });
 
+
+app.all('/api/*', function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "http://localhost:8080");
+});
+
+app.use(function (err, req, res, next) {
+    console.error(err.stack)
+    res.status(500).send('Something broke!')
+  });   
+
 // auth middleware
 function auth(req, res, next) {
     const token = db.accessTokens.find( token => token == req.get('Authorization').split(" ")[1]);
