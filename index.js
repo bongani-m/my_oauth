@@ -14,7 +14,8 @@ const db = {
         "ACCESS_TOKEN"
     ],
     refreshTokens: [],
-    grantType: ['client_creditals']
+    grantType: ['client_creditals'],
+    sessionIds: []
 };
 
 // Hello World to check if app is working
@@ -24,9 +25,20 @@ app.get('/', (req, res) => {
     })
 });
 
+// locking down for clients that would be using OAuth password grant
+app.all('/local/*', function (req, res, next) {
+    // res.header("Access-Control-Allow-Origin", "http://localhost:8080");
+    const session_id = uuid();
+    db.sessionIds.push(session_id);
+    res.cookie('sessionid', session_id, { httpOnly: true });
+    next();
+});
 
-app.all('/api/*', function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "http://localhost:8080");
+// TODO: OAUTH password grand
+
+// placehoder 
+app.get('/local/api', (req, res) => {
+   res.json({message: "Hello, World"});
 });
 
 app.use(function (err, req, res, next) {
